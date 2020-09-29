@@ -23,7 +23,7 @@ class TSIMTraces:
         
         self.Trace = []
         self.RandomTraces = []
-        self.map = []
+        self.Map = []
         
         
         
@@ -54,7 +54,6 @@ class TSIMTraces:
       def GetDyeLocationsInPixel(self,ReCuts):
         ReCuts = np.array(ReCuts)
         ReCuts = ReCuts-ReCuts[0]        
-#        ReCutsInPx = (ReCuts*self.Stretch*self.BPSize)/self.PixelSize
         ReCutsInPx = msc.kbToPx(ReCuts,self)
           
         return ReCutsInPx

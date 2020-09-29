@@ -9,8 +9,20 @@ from Bio import Restriction
 import Core.SIMTraces
 
 
+# def GetGauss(sigma,pixelsz):
+    
 
+def GetFWHM(wavelength,NA):
+    FWHM = wavelength/(2*NA)
+    return FWHM
+    
+def FWHMtoSigma(FWHM):
+    sigma = FWHM/2.355
+    return sigma 
 
+def SigmatoFWHM(Sigma):
+    FWHM = sigma*2.355
+    return FWHM
     
 def rebasecuts(Enzyme, Strand):
     batch = Restriction.RestrictionBatch()
