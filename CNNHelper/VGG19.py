@@ -40,6 +40,7 @@ def VGG19(classes):
     x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
     x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
     x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+
     x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
     x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
     x = layers.Concatenate()([convOutput3,x])

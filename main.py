@@ -10,7 +10,7 @@ import Core.RandomTraceGenerator as RTG
 import numpy as np
 from ImGen.ImGen import TrainImageGenerator
 
-SIMTRC     = SIMTraces.TSIMTraces('CP000948',1.75,0.34,0,'TaqI',107)  
+SIMTRC     = SIMTraces.TSIMTraces('CP000948',1.75,0.34,0,'TaqI',40)  
 
 
 ReCuts     = SIMTRC.GetTraceRestrictions()
@@ -23,7 +23,11 @@ Traces = R.stratsample(np.asarray(ReCutsInPx))
 EffLabeledTraces = R.GetEffLabelingRate(Traces,0.75)
 
 
-TrainImageGenerator('D:\Sergey\TrainDirectory', 1, 50, 512, 510 , 1.4, SIMTRC.PixelSize )
+IMGEN = TrainImageGenerator('D:\Sergey\TrainDirectory', 1, 50, 1024, 510 , 1.4, SIMTRC.PixelSize )
+Image = IMGEN.Generate(EffLabeledTraces)
+
+
+
 
 
 

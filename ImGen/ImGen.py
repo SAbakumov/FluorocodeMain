@@ -11,7 +11,7 @@ Created on Mon Sep 28 12:59:13 2020
 # from tensorflow.keras import layers
 import numpy as np
 import os
-# from scipy.signal import convolve2d
+from scipy.signal import convolve2d
 from Core.SIMTraces import TSIMTraces
 import Core.Misc as msc
 
@@ -61,11 +61,25 @@ class TrainImageGenerator(TSIMTraces):
                 for index in Positions:
                     if round(index)<self.Resolution:
                         img[int(round(index))][GetInitialYPos] = img[int(round(index))][GetInitialYPos]+1
-                
+            img = self.GetImage(img)
                 
                 
         return img
-    # def GetImage(self, img):
+    
+    
+    
+    def GetImage(self, img):
+        FWHM = msc.GetFWHM(self.Wavelength,self.NA)
+        sigma = msc.FWHMtoSigma(FWHM) 
+        GaussToConvolve = msc.GetGauss(sigma, self.pixelsize)
+        
+        Image = convolve2d(img,GaussToConvolve,mode='same')
+        return Image
+        
+        
+        
+        
+        
         
         
 # Images =  TrainImageGenerator('D:\Sergey\TrainDirectory', 1, 50, 512,Wavelength =510 , NA = 1.4 )

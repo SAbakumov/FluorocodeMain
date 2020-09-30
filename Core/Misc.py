@@ -7,9 +7,19 @@ Created on Sun Sep 27 19:55:53 2020
 
 from Bio import Restriction
 import Core.SIMTraces
+import numpy as np
 
 
-# def GetGauss(sigma,pixelsz):
+def GetGauss(sigma,pixelsz):
+    x = np.linspace(-18,17)*pixelsz
+    y = np.linspace(-18,17)*pixelsz
+    
+    xv,yv = np.meshgrid(x,y)
+    Gauss = 20*np.multiply(np.exp(-np.power(xv,2)/(2*np.power(sigma,2))),np.exp(-np.power(yv,2)/(2*np.power(sigma,2))))
+    return Gauss
+    
+    
+    
     
 
 def GetFWHM(wavelength,NA):
@@ -21,7 +31,7 @@ def FWHMtoSigma(FWHM):
     return sigma 
 
 def SigmatoFWHM(Sigma):
-    FWHM = sigma*2.355
+    FWHM = Sigma*2.355
     return FWHM
     
 def rebasecuts(Enzyme, Strand):
