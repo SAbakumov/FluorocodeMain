@@ -46,4 +46,7 @@ class RandomTraceGenerator:
         EffLabeledTraces = list(map(LabelTransform, Traces))
         return EffLabeledTraces
         
+    def GetCombinedRandomizedTraces(ListOfRandomTraces,numclasses):
+        TotalCombinedList = []
+        return TotalCombinedList
         

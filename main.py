@@ -22,9 +22,9 @@ Traces = R.stratsample(np.asarray(ReCutsInPx))
 
 EffLabeledTraces = R.GetEffLabelingRate(Traces,0.75)
 
+IMGEN = TrainImageGenerator('D:\Sergey\TrainDirectory', 1000,30, 512, 510 , 1.4, SIMTRC.PixelSize )
+AllImages,AllLabels   = IMGEN.Generate(EffLabeledTraces,1)
 
-IMGEN = TrainImageGenerator('D:\Sergey\TrainDirectory', 1, 50, 1024, 510 , 1.4, SIMTRC.PixelSize )
-Image = IMGEN.Generate(EffLabeledTraces)
 
 
 

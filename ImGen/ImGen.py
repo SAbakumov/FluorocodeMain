@@ -15,6 +15,7 @@ from scipy.signal import convolve2d
 from Core.SIMTraces import TSIMTraces
 import Core.Misc as msc
 
+
 class TrainImageGenerator(TSIMTraces):
     def __init__(self, TrainDir,NumImages,NumTracesPerImage,Resolution,Wavelength,NA,pixelsize):
         if not(os.path.exists(TrainDir)):            
@@ -26,52 +27,82 @@ class TrainImageGenerator(TSIMTraces):
         self.Wavelength = Wavelength
         self.NA         = NA
         self.pixelsize  = pixelsize
+        self.numclasses = 1
         
     # @classmethod
     # def from_super_instance(cls, TrainDir,NumImages,NumTracesPerImage,Resolution,Wavelength,NA, super_instance):
     #     return cls(TrainDir,NumImages,NumTracesPerImage,Resolution,Wavelength,NA, **super_instance.__dict__)
 
         
-    def Generate(self, LabeledTraces):
+    def Generate(self, LabeledTraces, numclass):
+        AllImages = []
+        AllLabels = []
+        TraceNum = 0
         for image in range(0,self.NumImages):
-            img = np.zeros([self.Resolution,self.Resolution])
-            for tracenum in range(0,self.NumTracesPerImage):
+            img = np.float32(np.zeros([self.Resolution,self.Resolution]))
+            labelimg = np.zeros([self.Resolution,self.Resolution],dtype=int)
+            GetInitialYPos = 0
+            for tracenum in range(TraceNum,TraceNum+self.NumTracesPerImage):
+                if TraceNum+self.NumTracesPerImage>len(LabeledTraces):
+                    TraceNum =0
+                TraceNum+=1
                 trace = LabeledTraces[tracenum]
                 trace = trace-trace[0]
                 
-                GetInitialXPos = np.random.randint(-self.Resolution,self.Resolution-1)
-                GetInitialYPos = np.random.randint(0,self.Resolution)
+                GetInitialXPos = np.random.randint(-trace.item(len(trace)-1),self.Resolution-50)
+                
+                step = round(self.Resolution/self.NumTracesPerImage)
+                if step < 16:
+                    step = 16
+                    
+                
+                GetInitialYPos = np.random.randint(GetInitialYPos+step-6,GetInitialYPos+step+6)
+                if GetInitialYPos > self.Resolution-(step+6):
+                    break
+                
                 
                 trace = trace+GetInitialXPos
-                InitIndex = np.argwhere(trace>=0)-1
-                FinIndex  = np.argwhere(trace>self.Resolution)
-                if len(InitIndex)==0:
-                    InitIndex = 0
-                else:
-                    InitIndex = InitIndex.item(0)
-                if len(FinIndex)==0:
-                    FinIndex  = len(trace)-1
-                else:    
-                    FinIndex = FinIndex.item(0)-1
-                    
+                InitIndex = np.argwhere(trace>0)
+                FinIndex  = np.argwhere(trace<self.Resolution)
+                
+                InitIndex = InitIndex.item(0)  
+                FinIndex = FinIndex.item(len(FinIndex)-1)-1
+                   
                     
 
                 
                 Positions  = trace[InitIndex:FinIndex]
-                for index in Positions:
-                    if round(index)<self.Resolution:
-                        img[int(round(index))][GetInitialYPos] = img[int(round(index))][GetInitialYPos]+1
+                # CorrectedPositions = [x for x in Positions if x>0 and x<self.Resolution]
+                
+                if len(Positions)!=0:
+                    labelimg = self.GetLabel(labelimg,[Positions[0],Positions[-1]],GetInitialYPos, np.int32(numclass))
+                    # return labelimg
+                    for index in Positions:
+                        if round(index)<self.Resolution:
+                            img[int(round(index))][GetInitialYPos] = img[int(round(index))][GetInitialYPos]+1
+                        
             img = self.GetImage(img)
+            print('\r'+ str(image) + " from " + str(self.NumImages) + " done", end = ""  )
+            AllImages.append(img)
+            AllLabels.append(labelimg)
+            
+        return AllImages,AllLabels    
                 
-                
-        return img
+        # return img
     
-    
+    def GetLabel(self,lbimg, Xpos,Ypos,numclass):
+        xin = Xpos[0].astype(int)
+        xlast = Xpos[1].astype(int)
+
+
+        lbimg[xin:xlast,Ypos-3:Ypos+3]=numclass
+        return lbimg
+        
     
     def GetImage(self, img):
         FWHM = msc.GetFWHM(self.Wavelength,self.NA)
         sigma = msc.FWHMtoSigma(FWHM) 
-        GaussToConvolve = msc.GetGauss(sigma, self.pixelsize)
+        GaussToConvolve = np.float32(msc.GetGauss(sigma, self.pixelsize))
         
         Image = convolve2d(img,GaussToConvolve,mode='same')
         return Image
