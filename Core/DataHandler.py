@@ -11,7 +11,7 @@ import numpy as np
 import os
 import tifffile as tiff
 import cv2
-import Misc as msc
+import Core.Misc as msc
 import tensorflow as tf
 
 class DataLoader():
@@ -71,9 +71,31 @@ class DataConverter():
     
     def ToOneHot(self,img,numclass,numclasses):
         image  = tf.one_hot(img,numclasses)
-        return image
+        return image.numpy()
         
-    # def ToNPZ(imgArray):
+    def ToNPZ(self,imgArrays,numclasses):
+        DataTensor = np.empty(np.shape(imgArrays[0][0]))
+
+        if len(np.shape(imgArrays[0][0]))!=3:     
+            DataTensor = np.expand_dims(DataTensor,axis = 2)
+             
+        for image in range(0, len(imgArrays[0])):
+            for numclass in range(0,numclasses):
+               ToAddImg = imgArrays[numclass][image]
+               if len(np.shape(ToAddImg))!=3:
+                   ToAddImg =   np.expand_dims(ToAddImg, axis = 2)
+               if np.shape(DataTensor)==np.shape(ToAddImg):
+                   DataTensor = np.stack([DataTensor,ToAddImg ],axis=0)
+               else:
+                   DataTensor = np.concatenate([DataTensor,np.expand_dims(ToAddImg,axis = 0)])
+
+        return DataTensor
+                
+            
+            
+            
+            
+        
         
         
         

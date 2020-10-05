@@ -9,7 +9,7 @@ import matplotlib as plt
 from tensorflow import keras
 from tensorflow.keras import layers
 import numpy as np
-import NNBuilder as nn
+import CNNHelper.NNBuilder as nn
 
 def VGG19(classes):
     classes = 3
