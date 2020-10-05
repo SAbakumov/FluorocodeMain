@@ -12,6 +12,7 @@ import os
 import tifffile as tiff
 import cv2
 import Misc as msc
+import tensorflow as tf
 
 class DataLoader():
     def __init__(self):
@@ -68,15 +69,21 @@ class DataLoader():
         
 class DataConverter():
     
-    def ToOneHot(img,numclass,numclasses):
+    def ToOneHot(self,img,numclass,numclasses):
+        image  = tf.one_hot(img,numclasses)
+        return image
+        
+    # def ToNPZ(imgArray):
         
         
-        return img        
+        
+        
+        
     
     
 
 
-Dt = DataLoader()          
-Dt.PrepareTrainingData('D:\Vibrio Harveyi\FOVData\CroppedAndInverted')
-Dt.PrepareLabeledData('D:\Vibrio Harveyi\FOVData\Mask')
+# Dt = DataLoader()          
+# Dt.PrepareTrainingData('D:\Vibrio Harveyi\FOVData\CroppedAndInverted')
+# Dt.PrepareLabeledData('D:\Vibrio Harveyi\FOVData\Mask')
   
