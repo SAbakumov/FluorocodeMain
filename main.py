@@ -10,6 +10,7 @@ import Core.RandomTraceGenerator as RTG
 import numpy as np
 from ImGen.ImGen import TrainImageGenerator
 from Core.DataHandler import DataConverter
+from Core.DataHandler import DataLoader
 
 genomes = ['CP000948','CP015409']
 
@@ -17,6 +18,7 @@ ImagesForAllGenomes = []
 LabelsForAllGenomes = []
 
 Dt = DataConverter()
+Ds = DataLoader()
 for genome in genomes:
     SIMTRC     = SIMTraces.TSIMTraces(genome,1.75,0.34,0,'TaqI',40)  
     
@@ -25,23 +27,27 @@ for genome in genomes:
     ReCutsInPx = SIMTRC.GetDyeLocationsInPixel(ReCuts)
     
     
-    R      = RTG.RandomTraceGenerator(Misc.kbToPx(60000,SIMTRC),Misc.kbToPx(5000,SIMTRC),1000)
+    R      = RTG.RandomTraceGenerator(Misc.kbToPx(60000,SIMTRC),Misc.kbToPx(5000,SIMTRC),20000)
     Traces = R.stratsample(np.asarray(ReCutsInPx))
     
     EffLabeledTraces = R.GetEffLabelingRate(Traces,0.75)
     
-    IMGEN = TrainImageGenerator('D:\Sergey\TrainDirectory', 500, 30, 512, 510 , 1.4, SIMTRC.PixelSize )
-    AllImages, AllLabels   = IMGEN.Generate(LabeledTraces=EffLabeledTraces,numclass=genomes.index(genome))
+    IMGEN = TrainImageGenerator('D:\Sergey\TrainDirectory',500,15, 512, 510 , 1.4, SIMTRC.PixelSize )
+    AllImages, AllLabels   = IMGEN.Generate(LabeledTraces=EffLabeledTraces,numclass=genomes.index(genome)+1)
     
-    
+    AllImages, AllLabels   = IMGEN.ImAugment( 5)
+
     
     ImagesForAllGenomes.append(AllImages)
     LabelsForAllGenomes.append([Dt.ToOneHot(x,0,3) for x in AllLabels])
     
-TrainingImages = Dt.ToNPZ(ImagesForAllGenomes)
-TrainingLabels = Dt.ToNPZ(LabelsForAllGenomes)
     
-    
+print("Converting to tensor:images")
+TrainingImages = Dt.ToNPZ(ImagesForAllGenomes,2)
+print("Converting to tensor:labels")
+TrainingLabels = Dt.ToNPZ(LabelsForAllGenomes,2)
+print("Saving...")
+Ds.SaveTrainingData(TrainingImages,TrainingLabels ,path="D:\Sergey\FluorocodeMain\FluorocodeMain\DataForTraining.npz")
 
 
 

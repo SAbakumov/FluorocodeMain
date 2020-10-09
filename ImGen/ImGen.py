@@ -14,6 +14,9 @@ import os
 from scipy.signal import convolve2d
 from Core.SIMTraces import TSIMTraces
 import Core.Misc as msc
+import random
+from PIL import Image
+from scipy.ndimage.interpolation import rotate
 
 
 class TrainImageGenerator(TSIMTraces):
@@ -28,6 +31,10 @@ class TrainImageGenerator(TSIMTraces):
         self.NA         = NA
         self.pixelsize  = pixelsize
         self.numclasses = 1
+        
+        
+        self.Images = []
+        self.Labels = []
         
     # @classmethod
     # def from_super_instance(cls, TrainDir,NumImages,NumTracesPerImage,Resolution,Wavelength,NA, super_instance):
@@ -46,7 +53,7 @@ class TrainImageGenerator(TSIMTraces):
                 if TraceNum+self.NumTracesPerImage>len(LabeledTraces):
                     TraceNum =0
                 TraceNum+=1
-                trace = LabeledTraces[tracenum]
+                trace = LabeledTraces[TraceNum]
                 trace = trace-trace[0]
                 
                 GetInitialXPos = np.random.randint(-trace.item(len(trace)-1),self.Resolution-50)
@@ -86,6 +93,10 @@ class TrainImageGenerator(TSIMTraces):
             AllImages.append(img)
             AllLabels.append(labelimg)
             
+            
+            self.Images = AllImages
+            self.Labels = AllLabels
+            
         return AllImages,AllLabels    
                 
         # return img
@@ -109,8 +120,26 @@ class TrainImageGenerator(TSIMTraces):
         
         
         
+    def ImAugment(self,numaugmentations):
+        for image in range(0,len(self.Images)):
+            for i in range(0,numaugmentations):
+                im = self.Images[image]
+                lb = self.Labels[image]
+                
+                
+                angle = random.uniform(0, 180)
+                im = rotate(im, angle,reshape = False)
+                lb = rotate(lb, angle,reshape = False)
+                self.Images.insert(image,im)
+                self.Labels.insert(image,lb)
+
+        return self.Images,  self.Labels
+            
         
         
+    
+            
+    
         
         
 # Images =  TrainImageGenerator('D:\Sergey\TrainDirectory', 1, 50, 512,Wavelength =510 , NA = 1.4 )
