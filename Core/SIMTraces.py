@@ -29,7 +29,7 @@ class TSIMTraces:
         
         
       def GetTraceRestrictions(self):
-        Entrez.email = ""
+        Entrez.email = "abakumov.sergey1997@gmail.com"
         
         search_term = self.Species
         handle = Entrez.esearch(db='nucleotide', term=search_term) 
@@ -57,7 +57,18 @@ class TSIMTraces:
         ReCutsInPx = msc.kbToPx(ReCuts,self)
           
         return ReCutsInPx
-      
+    
+      def GetTraceProfile(self,trace,gauss,size):
+        x = np.linspace(0,size,size)
+        trace = trace-np.min(trace)
+        for i in range(0,len(trace)):
+            x[np.round(trace[i])] = x[np.round(trace[i])]+1
+            
+        
+        signal = np.convolve(x,gauss, mode = 'same')
+        return signal
+        
+    
 #      def GetRandomTraces(NumTraces,LabelRate,FPRate,AvLength,):
 #        traces = Misc.stratsample(arr,avlength,sigmalength,numsamples)
 #        for trace in range(0,NumTraces):

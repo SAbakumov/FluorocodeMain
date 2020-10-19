@@ -10,6 +10,14 @@ import Core.SIMTraces
 import numpy as np
 import sys
 
+
+def GetGauss1d(size,sigma,pixelsz):
+    x = np.linspace(-np.round(size/2),np.round(size/2))*pixelsz
+    Gauss = 20*np.exp(-np.power(x,2)/(2*np.power(sigma,2)))
+    return Gauss
+
+
+    
 def GetGauss(sigma,pixelsz):
     x = np.linspace(-18,17)*pixelsz
     y = np.linspace(-18,17)*pixelsz

@@ -2,7 +2,7 @@
 """
 Created on Mon Sep 28 12:59:13 2020
 
-@author: Boris
+@author: Sergey
 """
 
 # import tensorflow as tf
@@ -63,8 +63,8 @@ class TrainImageGenerator(TSIMTraces):
                     step = 16
                     
                 
-                GetInitialYPos = np.random.randint(GetInitialYPos+step-6,GetInitialYPos+step+6)
-                if GetInitialYPos > self.Resolution-(step+6):
+                GetInitialYPos = np.random.randint(GetInitialYPos+step-6,GetInitialYPos+step+15)
+                if GetInitialYPos > self.Resolution-(step+15):
                     break
                 
                 
@@ -106,7 +106,7 @@ class TrainImageGenerator(TSIMTraces):
         xlast = Xpos[1].astype(int)
 
 
-        lbimg[xin:xlast,Ypos-3:Ypos+3]=numclass
+        lbimg[xin:xlast,Ypos-1:Ypos+4]=numclass
         return lbimg
         
     
@@ -121,19 +121,23 @@ class TrainImageGenerator(TSIMTraces):
         
         
     def ImAugment(self,numaugmentations):
+        AugmentedImages = []
+        AugmentedLabels = []
         for image in range(0,len(self.Images)):
+            AugmentedImages.append(self.Images[image])
+            AugmentedLabels.append(self.Labels[image])
             for i in range(0,numaugmentations):
                 im = self.Images[image]
                 lb = self.Labels[image]
                 
                 
-                angle = random.uniform(0, 180)
+                angle = random.uniform(-5, 5)
                 im = rotate(im, angle,reshape = False)
                 lb = rotate(lb, angle,reshape = False)
-                self.Images.insert(image,im)
-                self.Labels.insert(image,lb)
+                AugmentedImages.append(im)
+                AugmentedLabels.append(lb)
 
-        return self.Images,  self.Labels
+        return AugmentedImages, AugmentedLabels
             
         
         

@@ -14,43 +14,54 @@ import CNNHelper.NNBuilder as nn
 def VGG19(classes):
     classes = 3
     
-    input = layers.Input(shape = (512,512,1))
-    x = nn.Blocks.ConvBlock(3,2,64,1,'relu',input)
-    convOutput1 = keras.layers.BatchNormalization()(x)
+    input = layers.Input(shape = (None,None,1))
+    convOutput1 = nn.Blocks.ConvBlock(3,2,64,1,'relu',input)
+    # convOutput1 = keras.layers.BatchNormalization()(x)
     x = layers.MaxPooling2D(pool_size= (2,2))(convOutput1)
+    # x = layers.Dropout(0.2)(x)
     
-    x = nn.Blocks.ConvBlock(3,2,128,1,'relu',x)
-    convOutput2 = keras.layers.BatchNormalization()(x)
+    convOutput2  = nn.Blocks.ConvBlock(3,2,128,1,'relu',x)
+    # convOutput2 = keras.layers.BatchNormalization()(x)
     x = layers.MaxPooling2D(pool_size= (2,2))(convOutput2)
-    
-    x = nn.Blocks.ConvBlock(3,2,256,1,'relu',x)
-    convOutput3 = keras.layers.BatchNormalization()(x)
+    # x = layers.Dropout(0.3)(x)
+
+    convOutput3 = nn.Blocks.ConvBlock(3,2,256,1,'relu',x)
+    # convOutput3 = keras.layers.BatchNormalization()(x)
     x= layers.MaxPooling2D(pool_size= (2,2))(convOutput3)
-    
-    
-    x = nn.Blocks.ConvBlock(3,4,512,1,'relu',x)
-    x = keras.layers.BatchNormalization()(x)
-    x = layers.MaxPooling2D(pool_size= (2,2))(x)
+    # x = layers.Dropout(0.4)(x)
+
     
     x = nn.Blocks.ConvBlock(3,4,512,1,'relu',x)
-    x = keras.layers.BatchNormalization()(x)
+    # x = keras.layers.BatchNormalization()(x)
     x = layers.MaxPooling2D(pool_size= (2,2))(x)
+    # x = layers.Dropout(0.5)(x)
+
     
-    x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
-    x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
-    x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
-    x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+    x = nn.Blocks.ConvBlock(3,4,512,1,'relu',x)
+    # x = keras.layers.BatchNormalization()(x)
+    x = layers.MaxPooling2D(pool_size= (2,2))(x)
+    # x = layers.Dropout(0.5)(x)
 
     x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
     x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+    x = keras.layers.BatchNormalization()(x)
+    x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
+    x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+    x = keras.layers.BatchNormalization()(x)
+
+    x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
+    x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+    x = keras.layers.BatchNormalization()(x)
     x = layers.Concatenate()([convOutput3,x])
     
     x = layers.Conv2DTranspose(128,kernel_size = (2,2), strides = (2,2))(x)
     x = layers.Conv2D(128,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+    x = keras.layers.BatchNormalization()(x)
     x = layers.Concatenate()([convOutput2,x])
     
     x = layers.Conv2DTranspose(64,kernel_size = (2,2), strides = (2,2))(x)
     x = layers.Conv2D(64,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+    x = keras.layers.BatchNormalization()(x)
     x = layers.Concatenate()([convOutput1,x])
     
     

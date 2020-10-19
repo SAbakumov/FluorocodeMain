@@ -30,18 +30,24 @@ class Blocks:
 
             
 
-                
-            x = layers.Conv2D(KernelNumber,KernelSize, Stride,  activation = Activation ,padding = 'same')(x)    
-            
+            x = layers.Conv2D(KernelNumber,KernelSize, Stride , padding = 'same')(x)    
+
+            # x = layers.Conv2D(KernelNumber,KernelSize, Stride ,kernel_regularizer=tf.keras.regularizers.l2(0.001), padding = 'same')(x)    
+            if Activation!=None:
+                x=layers.Activation(Activation)(x)
+            x = layers.BatchNormalization()(x)
+
     
         return x
+    
+    
     
     def GetProperty(Prop,i):
         if type(Prop)==list:
             Val = Prop[i]
         else:
             Val = Prop
-        return Prop
+        return Val
                 
 # inputs = keras.Input(shape=(28, 28, 1))
 # outputs = Blocks.ConvBlock(3,4,64,1,'relu',inputs)                

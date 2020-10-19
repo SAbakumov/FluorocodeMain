@@ -49,4 +49,33 @@ class RandomTraceGenerator:
     def GetCombinedRandomizedTraces(ListOfRandomTraces,numclasses):
         TotalCombinedList = []
         return TotalCombinedList
+    
+    
+    def GetRandomFixedLengthTraces(self,arr,length):
+        AllTraces  = [];
+        for i in range(0,self.numsamples):
+            StartIndexOfTrace = np.random.choice(arr)
+            EndIndexOfTrace = StartIndexOfTrace + length
+            
+            FirstInd =np.asscalar( np.argwhere(arr>=StartIndexOfTrace)[0])
+            try:
+                LastInd  =np.asscalar( np.argwhere(arr>=EndIndexOfTrace)[0])
+            except:
+                continue
+            
+            SubTrace = arr[FirstInd:LastInd]
+            AllTraces.append(SubTrace)
+                
+                
+     
+        return AllTraces
+
+            
+            
+                            
+                
+        
+            
+
+
         
