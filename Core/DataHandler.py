@@ -68,7 +68,9 @@ class DataLoader():
     def LoadTrainingData(self,path):
         
         Data = np.load(path)
-        TrainImages = (Data['training_data'].astype(np.float32)/pow(2,16)).astype(np.float32)
+        # TrainImages = (Data['training_data'].astype(np.float32)/pow(2,16)).astype(np.float32)
+        TrainImages = Data['training_data'].astype(np.float32)
+
         LabelImages = Data['training_labels'].astype(np.float32)
     
         
@@ -120,6 +122,35 @@ class DataConverter():
 
         return DataTensor
     
+    def ToNPZ1D(self,tracearray,numclasses,datatype):
+        totalNumElements = np.sum([len(x) for x in tracearray])
+        
+        if datatype=='data':
+            DataTensor = np.empty([totalNumElements,len(tracearray[0][0]),1])
+        if datatype=='label':
+            DataTensor = np.empty([totalNumElements,len(tracearray[0][0])])
+
+
+
+        AllTraces = []
+        for Genome in tracearray:
+            AllTraces.extend(Genome)
+            
+        random.Random(452856).shuffle(AllTraces)
+        for i in range(0,len(AllTraces)):
+            if datatype=='data':
+                DataTensor[i,:,:] = np.reshape(AllTraces[i],[len(AllTraces[i]),1])
+                
+            if datatype=='label':
+                DataTensor[i,:] = AllTraces[i]
+
+            
+        return DataTensor
+        
+        
+        
+        
+        
     
                 
             

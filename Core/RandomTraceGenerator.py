@@ -6,7 +6,7 @@ Created on Sun Sep 27 19:20:34 2020
 """
 
 import numpy as np
-
+import random
 
 
 class RandomTraceGenerator:
@@ -42,7 +42,9 @@ class RandomTraceGenerator:
         return AllTraces
     
     def GetEffLabelingRate(self,Traces,LabelingEfficiency):
-        LabelTransform = lambda x : np.sort(np.random.choice(x,int(LabelingEfficiency*len(x))))
+        
+        
+        LabelTransform = lambda x : np.sort(np.array(random.sample(list(x),int(LabelingEfficiency*len(x)))))
         EffLabeledTraces = list(map(LabelTransform, Traces))
         return EffLabeledTraces
         
@@ -51,27 +53,49 @@ class RandomTraceGenerator:
         return TotalCombinedList
     
     
-    def GetRandomFixedLengthTraces(self,arr,length):
-        AllTraces  = [];
-        for i in range(0,self.numsamples):
-            StartIndexOfTrace = np.random.choice(arr)
-            EndIndexOfTrace = StartIndexOfTrace + length
+    # def GetRandomFixedLengthTraces(self,arr,length):
+    #     AllTraces  = [];
+    #     for i in range(0,self.numsamples):
+    #         StartIndexOfTrace = np.random.choice(arr)
+    #         EndIndexOfTrace = StartIndexOfTrace + length
             
-            FirstInd =np.asscalar( np.argwhere(arr>=StartIndexOfTrace)[0])
-            try:
-                LastInd  =np.asscalar( np.argwhere(arr>=EndIndexOfTrace)[0])
-            except:
-                continue
+    #         FirstInd =np.asscalar( np.argwhere(arr>=StartIndexOfTrace)[0])
+    #         try:
+    #             LastInd  =np.asscalar( np.argwhere(arr>=EndIndexOfTrace)[0])
+    #         except:
+    #             continue
             
-            SubTrace = arr[FirstInd:LastInd]
-            AllTraces.append(SubTrace)
+    #         SubTrace = arr[FirstInd:LastInd]
+    #         AllTraces.append(SubTrace)
                 
                 
      
-        return AllTraces
+    #     return AllTraces
 
             
-            
+    def GetRandomFixedLengthTraces(self,arr,length):
+      AllTraces  = [];
+      
+      # step = np.max(arr)/self.numsamples
+      step = np.max(arr)/self.numsamples
+
+      for pos in range(0,int(np.round( np.max(arr))),int(step)):
+           StartIndexOfTrace = pos
+           EndIndexOfTrace = StartIndexOfTrace + length
+           
+           FirstInd =np.asscalar( np.argwhere(arr>=StartIndexOfTrace)[0])
+           try:
+               LastInd  =np.asscalar( np.argwhere(arr>=EndIndexOfTrace)[0])
+           except:
+               continue
+
+          
+           SubTrace = arr[FirstInd:LastInd]
+           AllTraces.append(SubTrace)
+              
+              
+   
+      return AllTraces          
                             
                 
         

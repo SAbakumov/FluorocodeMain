@@ -12,8 +12,9 @@ import sys
 
 
 def GetGauss1d(size,sigma,pixelsz):
-    x = np.linspace(-np.round(size/2),np.round(size/2))*pixelsz
+    x = np.linspace(-np.round(size/2),np.round(size/2), size+1)*pixelsz
     Gauss = 20*np.exp(-np.power(x,2)/(2*np.power(sigma,2)))
+    Gauss = Gauss[0:len(Gauss)-1]
     return Gauss
 
 

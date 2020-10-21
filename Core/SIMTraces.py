@@ -58,16 +58,22 @@ class TSIMTraces:
           
         return ReCutsInPx
     
-      def GetTraceProfile(self,trace,gauss,size):
-        x = np.linspace(0,size,size)
+      def GetTraceProfile(self,trace,gauss,size,orrarr):
+        x = np.zeros(size)
         trace = trace-np.min(trace)
         for i in range(0,len(trace)):
-            x[np.round(trace[i])] = x[np.round(trace[i])]+1
+            try:
+                x[int(np.round(trace.item(i)))] = x[int(np.round(trace.item(i)))]+1
+            except:
+                continue
             
-        
         signal = np.convolve(x,gauss, mode = 'same')
         return signal
+    
+    
         
+    
+    
     
 #      def GetRandomTraces(NumTraces,LabelRate,FPRate,AvLength,):
 #        traces = Misc.stratsample(arr,avlength,sigmalength,numsamples)

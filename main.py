@@ -21,18 +21,18 @@ Dt = DataConverter()
 Ds = DataLoader()
 for genome in genomes:
     SIMTRC     = SIMTraces.TSIMTraces(genome,1.75,0.34,0,'TaqI',80)  
-   
+    
     
     ReCuts     = SIMTRC.GetTraceRestrictions()
     ReCutsInPx = SIMTRC.GetDyeLocationsInPixel(ReCuts)
     
     ReCutsInPx = ReCutsInPx[1:7000]
-    R      = RTG.RandomTraceGenerator(Misc.kbToPx(40000,SIMTRC),Misc.kbToPx(5000,SIMTRC),25*1000)
+    R      = RTG.RandomTraceGenerator(Misc.kbToPx(40000,SIMTRC),Misc.kbToPx(5000,SIMTRC),16*4000)
     Traces = R.stratsample(np.asarray(ReCutsInPx))
     
-    EffLabeledTraces = R.GetEffLabelingRate(Traces,0.75)
+    EffLabeledTraces = R.GetEffLabelingRate(Traces,0.85)
     
-    IMGEN = TrainImageGenerator('D:\Sergey\TrainDirectory',200,25, 256, 510 , 1.4, SIMTRC.PixelSize )
+    IMGEN = TrainImageGenerator('D:\Sergey\TrainDirectory',800,16, 256, 510 , 1.4, SIMTRC.PixelSize )
     AllImages, AllLabels   = IMGEN.Generate(LabeledTraces=EffLabeledTraces,numclass=genomes.index(genome)+1)
     # AllImages, AllLabels   = IMGEN.ImAugment(5)
     

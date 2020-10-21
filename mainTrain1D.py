@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-Created on Mon Oct  5 16:02:31 2020
+Created on Tue Oct 20 20:55:37 2020
 
-@author: Sergey
+@author: Boris
 """
+
 import sys
 import numpy as np
 import tensorflow as tf
-from CNNHelper.ResNET import ResNet50
-from CNNHelper.VGG19 import VGG19
+from CNNHelper.CNN1D import CNN1D
 
 from datetime import datetime
 import tensorflow as tf
@@ -39,11 +39,11 @@ def weighted_categorical_crossentropy(y_true, y_pred):
     cross_entropy = tf.reduce_mean( -tf.reduce_sum(w*y_true*tf.math.log(tf.clip_by_value(y_pred,1e-10,1.0)),axis = -1))
     return cross_entropy
 
-model  =VGG19(3)
+model  =CNN1D(3)
 # model  =ResNet50(3)
-opt = keras.optimizers.Adam(learning_rate=0.0001)
+# opt = keras.optimizers.Adam(learning_rate=0.001)
 
-# opt = keras.optimizers.SGD(learning_rate=1,momentum=0.001)
+opt = keras.optimizers.SGD(learning_rate=0.01,momentum=0.01)
 model.compile(optimizer =opt, loss="categorical_crossentropy", metrics='accuracy')
 # model.compile(optimizer =opt, loss=weighted_categorical_crossentropy, metrics='accuracy')
 
@@ -51,11 +51,11 @@ model.summary()
 
 
 dt = DataLoader()
-X_Data ,Y_Data  = dt.LoadTrainingData("D:\Sergey\FluorocodeMain\FluorocodeMain\DataForTraining.npz")
-x_v ,y_v        = dt.LoadTrainingData("D:\Sergey\FluorocodeMain\FluorocodeMain\DataForValidation.npz")
+X_Data ,Y_Data  = dt.LoadTrainingData("D:\Sergey\FluorocodeMain\FluorocodeMain\DataForTraining1D.npz")
+x_v ,y_v        = dt.LoadTrainingData("D:\Sergey\FluorocodeMain\FluorocodeMain\DataForValidation1D.npz")
 
 
-history=model.fit(X_Data , Y_Data , batch_size =4, shuffle=True,  epochs=100, validation_data = (x_v,y_v))
+history=model.fit(X_Data , Y_Data , batch_size =16 , epochs=30, validation_data = (x_v,y_v))
 
 
 plt.plot(history.history['accuracy'])

@@ -37,14 +37,17 @@ def VGG19(classes):
     # x = layers.Dropout(0.5)(x)
 
     
-    x = nn.Blocks.ConvBlock(3,4,512,1,'relu',x)
-    # x = keras.layers.BatchNormalization()(x)
-    x = layers.MaxPooling2D(pool_size= (2,2))(x)
-    # x = layers.Dropout(0.5)(x)
+    # x = nn.Blocks.ConvBlock(3,4,512,1,'relu',x)
+    # # x = keras.layers.BatchNormalization()(x)
+    # x = layers.MaxPooling2D(pool_size= (2,2))(x)
+    # # x = layers.Dropout(0.5)(x)
 
-    x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
-    x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
-    x = keras.layers.BatchNormalization()(x)
+    # x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
+    # x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
+    # x = keras.layers.BatchNormalization()(x)
+    
+    
+    
     x = layers.Conv2DTranspose(256,kernel_size = (2,2), strides = (2,2))(x)
     x = layers.Conv2D(256,kernel_size = 3,padding = 'same',activation = 'relu')(x)
     x = keras.layers.BatchNormalization()(x)
