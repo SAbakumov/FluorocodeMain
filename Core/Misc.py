@@ -6,9 +6,25 @@ Created on Sun Sep 27 19:55:53 2020
 """
 
 from Bio import Restriction
+from Core.Noise import perlin
 import Core.SIMTraces
 import numpy as np
 import sys
+
+from scipy import sparse
+from scipy.sparse.linalg import spsolve
+
+def baseline_als(y, lam, p, niter=10):
+  L = len(y)
+  D = sparse.diags([1,-2,1],[0,-1,-2], shape=(L,L-2))
+  w = np.ones(L)
+  for i in range(niter):
+    W = sparse.spdiags(w, 0, L, L)
+    Z = W + lam * D.dot(D.transpose())
+    z = spsolve(Z, w*y)
+    w = p * (y > z) + (1-p) * (y < z)
+  return z
+
 
 
 def GetGauss1d(size,sigma,pixelsz):
@@ -17,8 +33,14 @@ def GetGauss1d(size,sigma,pixelsz):
     Gauss = Gauss[0:len(Gauss)-1]
     return Gauss
 
+def GetPerlinNoise(size):
+    noise=perlin.Perlin(50)
 
-    
+    time=[i for i in range(size)]
+    values=np.array([noise.valueAt(i) for i in time])
+    return values
+
+
 def GetGauss(sigma,pixelsz):
     x = np.linspace(-18,17)*pixelsz
     y = np.linspace(-18,17)*pixelsz
@@ -52,16 +74,16 @@ def update_progress(progress):
    sys.stdout.flush()
    
 
-def GetFWHM(wavelength,NA):
-    FWHM = wavelength/(2*NA)
+def GetFWHM(wavelength,NA,ResEnhancement):
+    FWHM =  0.61*wavelength/(NA)/ResEnhancement
     return FWHM
     
 def FWHMtoSigma(FWHM):
-    sigma = FWHM/2.355
+    sigma = FWHM/2.3548
     return sigma 
 
 def SigmatoFWHM(Sigma):
-    FWHM = Sigma*2.355
+    FWHM = Sigma*2.3548
     return FWHM
     
 def rebasecuts(Enzyme, Strand):
@@ -97,4 +119,6 @@ def PxTokb(arr,args):
     arr  =   (arr/stretch/nmbp)*pixelsz
     return arr
     
-    
+def ZScoreTransform(trace):
+    trace = (trace - np.mean(trace))/np.std(trace)
+    return trace

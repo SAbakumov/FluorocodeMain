@@ -81,6 +81,8 @@ class RandomTraceGenerator:
 
       for pos in range(0,int(np.round( np.max(arr))),int(step)):
            StartIndexOfTrace = pos
+           
+           # StartIndexOfTrace = np.random.choice(arr)
            EndIndexOfTrace = StartIndexOfTrace + length
            
            FirstInd =np.asscalar( np.argwhere(arr>=StartIndexOfTrace)[0])
@@ -95,7 +97,21 @@ class RandomTraceGenerator:
               
               
    
-      return AllTraces          
+      return AllTraces    
+
+    def GetRandomTraces(self,maxNumDyes,minNumDyes,length,numsamples):
+      RandomTraces = []
+      for sample in range(0, numsamples):
+          numDyes =  random.randint(minNumDyes, maxNumDyes) 
+          trace   =  np.zeros([length,1])
+          for i  in range(0, numDyes):
+              pos = random.randint(0,length-1)
+              trace[pos] = trace[pos] + 1 +random.uniform(-0.2,0.2)
+          RandomTraces.append(trace)
+          
+      return RandomTraces
+      
+         
                             
                 
         

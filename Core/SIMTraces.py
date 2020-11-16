@@ -9,6 +9,8 @@ from Bio import Entrez
 from Bio import SeqIO
 import Core.Misc as msc
 import Core.RandomTraceGenerator as RTG
+import random
+import os
 
 
 class TSIMTraces:
@@ -31,14 +33,31 @@ class TSIMTraces:
       def GetTraceRestrictions(self):
         Entrez.email = "abakumov.sergey1997@gmail.com"
         
+        
+        ROOT_DIR = os.path.abspath(os.curdir)
+        DataBasePath = os.path.join(ROOT_DIR, 'DataBases')
         search_term = self.Species
-        handle = Entrez.esearch(db='nucleotide', term=search_term) 
-        record = Entrez.read(handle) 
-        ids = record['IdList']
+        
+        FileName =  '%s.fasta' % search_term
+        
+        if not os.path.exists(os.path.join(DataBasePath,FileName )):
+            handle = Entrez.efetch(db="nucleotide", id=search_term, rettype="fasta", retmode= 'text')
+            
+            f = open(os.path.join(DataBasePath,FileName ), 'w')
+            f.write(handle.read())
+            f.close()
+        
+        genome = SeqIO.parse(os.path.join(DataBasePath,FileName ), "fasta")
+
+
+        
+        # handle = Entrez.esearch(db='nucleotide', term=search_term, retmode="xml") 
+        # record = Entrez.read(handle) 
+        # ids = record['IdList']
         
         
-        handle = Entrez.efetch(db="sequences", id=ids,rettype="gb", retmode="text")
-        genome = SeqIO.parse(handle, "gb")
+        # handle = Entrez.efetch(db="nucleotide", id=ids,rettype="gb", retmode="text")
+        # genome = SeqIO.parse(handle, "gb")
         for record in genome:
             CompleteSequence = record.seq
             
@@ -63,16 +82,34 @@ class TSIMTraces:
         trace = trace-np.min(trace)
         for i in range(0,len(trace)):
             try:
-                x[int(np.round(trace.item(i)))] = x[int(np.round(trace.item(i)))]+1
+                x[int(np.round(trace.item(i)))] = x[int(np.round(trace.item(i)))]+1+random.uniform(-0.2,0.2)
             except:
                 continue
             
         signal = np.convolve(x,gauss, mode = 'same')
+        signal = msc.ZScoreTransform(signal)
         return signal
     
+      def GetFluorocodeProfile(self,trace,gauss,size):
+        signal = np.convolve(trace,gauss, mode = 'same')
+        signal = msc.ZScoreTransform(signal)
+        return signal
     
         
-    
+      def GetFullProfile(self,genome):
+        genome = genome[0]
+        Trace = np.zeros([int(np.round(np.max(genome)).item())])
+        for i in range(0,len(genome)-1):
+            try:
+                pos = int(np.round(genome[i].item()+np.random.uniform(-1.5,1.5)))
+                # pos = int(np.round(genome[i].item()))
+
+                Trace[pos] =  Trace[pos]+1+np.random.uniform(-0.1,0.1)
+            except:
+                pos = int(np.round(genome[i].item()+np.random.uniform(-2,2)))
+
+          
+        return Trace
     
     
 #      def GetRandomTraces(NumTraces,LabelRate,FPRate,AvLength,):
